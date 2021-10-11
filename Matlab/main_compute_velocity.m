@@ -1,0 +1,11 @@
+addpath('../Data/raw_data/');
+load('vmean_with_coordinate_interpolated2.mat');
+para_model.rho = 10;
+para_model.tau = 1;
+para_alg.alpha = 0.1;
+para_alg.beta = 10;
+para_alg.omega = 1.618;
+para_alg.maxit = 1000;
+para_alg.tol = 0.1;
+[Ux,Uy,Uz,res] = velocity_field_constrained(interpolate_brain_image,para_model,para_alg);
+save('../Data/raw_data/velocity_of_lfp.mat', 'Ux', 'Uy', 'Uz', 'res');
