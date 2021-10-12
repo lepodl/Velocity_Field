@@ -161,7 +161,7 @@ for iter = 1:para_alg.maxit
     % Check convergence
     res(1,iter) = norm(res_primal,'inf');
     res(2,iter) = norm(res_dual,'inf');
-    fprintf('res: %.2f\n', norm(res(:,iter),'inf'));
+    fprintf('iter %d | res: %.2f\n', iter, norm(res(:,iter),'inf'));
     if norm(res(:,iter),'inf') < para_alg.tol
         break
     end

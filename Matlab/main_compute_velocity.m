@@ -7,5 +7,6 @@ para_alg.beta = 10;
 para_alg.omega = 1.618;
 para_alg.maxit = 1000;
 para_alg.tol = 0.1;
+interpolate_brain_image = interpolate_brain_image * 300;
 [Ux,Uy,Uz,res] = velocity_field_constrained(interpolate_brain_image,para_model,para_alg);
 save('../Data/raw_data/velocity_of_lfp.mat', 'Ux', 'Uy', 'Uz', 'res');
