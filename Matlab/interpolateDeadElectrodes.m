@@ -27,20 +27,22 @@ ndead = length(deadElectrodes(:));
 fprintf('nzero channel %d\n', ndead);
 
 deadElectrodes = deadElectrodes(:)';
+tic;
 
 while ii <= length(deadElectrodes(:))
     id = deadElectrodes(ii);
+    ii = ii+1;
   
     
     % Define surrounding nodes in the form [down up left right]
     surrounding = [id+1 id-1 id+nr id-nr, id-nc*nr, id+nc*nr];
     
     % Remove nodes that wrap around the edges
-    if mod(id,nr) == 0
-        surrounding(1) = [];
-    elseif mod(id,nr) == 1
-        surrounding(2) = [];
-    end
+%     if mod(id,nr) == 0
+%         surrounding(1) = [];
+%     elseif mod(id,nr) == 1
+%         surrounding(2) = [];
+%     end
 
     % Remove out of bounds nodes
     outOfBounds = surrounding<1 | surrounding>nr*nc*nz;
@@ -49,14 +51,16 @@ while ii <= length(deadElectrodes(:))
     % Remove surrounding nodes that are corners or other bad nodes unless
     % these are the only available nodes
     badSurround = ismember(surrounding,deadElectrodes);
-    surrounding(badSurround) = [];
+    if ii<=ndead || sum(badSurround) < length(surrounding)
+        surrounding(badSurround) = [];
+    end
     
     % If there are no valid surroudning electrodes, push it to the back of
     % the queue
-%     if isempty(surrounding)
-%         deadElectrodes = [deadElectrodes, id];
-%         continue
-%     end
+    if isempty(surrounding)
+        deadElectrodes = [deadElectrodes, id];
+        continue
+    end
     
     % Set to median value of surrounding electrodes
     if ~isempty(surrounding)
@@ -67,5 +71,6 @@ end
 
 % Reshape to original dimensions
 signalGrid = reshape(signalGrid, sg);
+toc;
 
 end

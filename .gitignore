@@ -510,3 +510,4 @@ fabric.properties
 # add by Leopold
 .idea
 Data/raw_data
+Data/process_data
