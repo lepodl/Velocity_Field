@@ -8,6 +8,7 @@ import os
 import h5py
 import sparse
 from scipy.io import savemat, loadmat
+import matplotlib.pyplot as plt
 import time
 
 
@@ -20,16 +21,27 @@ def np_move_avg(a, n=10, mode="same"):
     return np.stack(tmp, axis=1)
 
 
+def show(data):
+    seed = np.random.randint(low=0, high=data.shape[1], size=(4,))
+    fig, ax = plt.subplots(4, 1, figsize=(8, 5), dpi=300)
+    ax = ax.flatten()
+    for i in range(4):
+        ax[i].plot(data[:, seed[i]])
+    fig.savefig("./show_lfp.png")
+    return
+
+
 # Step 1
 start = time.time()
 project_path = "../"
 data_path = os.path.join(project_path, "Data/raw_data")
 invert_index = np.load("../Data/raw_data/invert_index.npy")
-lfp = np.load("../Data/raw_data/vmean.npy")
-lfp = lfp[:, invert_index]# vmean shape: (1600, 22703)
-lfp = np_move_avg(lfp, n=10, mode="valid")
-lfp = lfp[700:1200, :]
-lfp = lfp[::3, :]
+lfp = np.load("../Data/raw_data/lfp_200hz.npy")
+lfp = lfp[:, invert_index] # vmean shape: (1600, 22703)
+# lfp = np_move_avg(lfp, n=3, mode="valid")
+# show(lfp)
+# lfp = lfp[700:1200, :]
+# lfp = lfp[::3, :]
 t, num = lfp.shape
 bad_channel = np.where(lfp<-65.)[1]
 bad_channel = np.unique(bad_channel)
@@ -88,6 +100,6 @@ data = lfp.T.reshape((-1))
 # coords = tuple(x for x in coords)
 coo = sparse.COO(coords=coords, data=data, shape=shape)
 data = coo.todense()
-savemat(os.path.join(data_path, "lfp.mat"), mdict={"brain_image": data, "xyz": xyz, "interp_idnex":linear_interpolate_index})
+savemat(os.path.join(data_path, "lfp_200hz.mat"), mdict={"brain_image": data, "interp_idnex":linear_interpolate_index})
 print(f"Done! cost time {time.time() - start:.2f}")
 

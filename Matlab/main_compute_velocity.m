@@ -1,12 +1,14 @@
 addpath('../Data/raw_data/');
-load('vmean_with_coordinate_interpolated2.mat');
+load('lfp_interpolated_200hz.mat');
 para_model.rho = 10;
 para_model.tau = 1;
 para_alg.alpha = 0.1;
 para_alg.beta = 10;
 para_alg.omega = 1.618;
-para_alg.maxit = 1000;
+para_alg.maxit = 50;
 para_alg.tol = 0.1;
 interpolate_brain_image = interpolate_brain_image * 300;
-[Ux,Uy,Uz,res] = velocity_field_constrained(interpolate_brain_image,para_model,para_alg);
-save('../Data/raw_data/velocity_of_lfp.mat', 'Ux', 'Uy', 'Uz', 'res');
+interpolate_brain_image = permute(interpolate_brain_image, [2, 1, 3, 4]);
+interpolate_brain_image(isnan(interpolate_brain_image))=0;
+[Ux,Uy,Uz,res] = velocity_field_constrained_v2(interpolate_brain_image,para_model,para_alg);
+save('../Data/raw_data/velocity_of_lfp_200hz.mat', 'Ux', 'Uy', 'Uz', 'res');
